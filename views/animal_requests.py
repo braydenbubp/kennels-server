@@ -39,3 +39,19 @@ def get_single_animal(id):
         if animal["id"] == id:
             requested_animal = animal
     return requested_animal
+
+def create_animal(animal):
+    # get id value of last animal in the list
+    max_id = ANIMALS[-1]["id"]
+
+    #add 1 to that number
+    new_id = max_id + 1
+
+    #add an id property to the animal dictionary
+    animal["id"] = new_id
+
+    #add the animal dictionary to the list
+    ANIMALS.append(animal)
+
+    #return dictionary with id property added
+    return animal
