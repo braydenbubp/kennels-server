@@ -4,24 +4,36 @@ ANIMALS = [
         "name": "Snickers",
         "species": "Dog",
         "locationId": 1,
-        "customerId": 4
+        "customerId": 4,
+        "status": "Admitted"
     },
     {
         "id": 2,
         "name": "Roman",
         "species": "Dog",
         "locationId": 1,
-        "customerId": 2
+        "customerId": 2,
+        "status": "Admitted"
     },
     {
         "id": 3,
         "name": "Blue",
         "species": "Cat",
         "locationId": 2,
-        "customerId": 1
+        "customerId": 1,
+        "status": "Admitted"
     }
 ]
-
+class Animals():
+    
+    #class initializer - has 5 parameters with self param that every method on a class needs as first param
+    def __init__(self, id, name, breed, status, location_id, customer_id):
+        self.id = id
+        self.name = name
+        self.breed = breed
+        self.status = status
+        self.location_id = location_id
+        self.customer_id = customer_id
 
 def get_all_animals():
     return ANIMALS
@@ -69,3 +81,11 @@ def delete_animal(id):
     #if the animal was found use pop(int) to remove it from list
     if animal_index >= 0:
         ANIMALS.pop(animal_index)
+
+def update_animal(id, new_animal):
+    #iterate animals list but use enumerate() so you can access the index value of each item
+    for index, animal in enumerate(ANIMALS):
+        if animal["id"] == id:
+            #found the animal, update the value
+            ANIMALS[index] = new_animal
+            break
