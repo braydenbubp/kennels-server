@@ -24,16 +24,6 @@ ANIMALS = [
         "status": "Admitted"
     }
 ]
-class Animals():
-    
-    #class initializer - has 5 parameters with self param that every method on a class needs as first param
-    def __init__(self, id, name, breed, status, location_id, customer_id):
-        self.id = id
-        self.name = name
-        self.breed = breed
-        self.status = status
-        self.location_id = location_id
-        self.customer_id = customer_id
 
 def get_all_animals():
     return ANIMALS
