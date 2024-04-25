@@ -104,10 +104,31 @@ def delete_customer(id):
 
 
 def update_customer(id, new_customer):
-    for index, customer in enumerate(CUSTOMERS):
-        if customer["id"] == id:
-            CUSTOMERS[index] = new_customer
-            break
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Customer
+            SET
+                id = ?,
+                name = ?,
+                address = ?,
+                email = ?,
+                password = ?
+        WHERE id = ?
+        """, (new_customer['id'], new_customer['name'], new_customer['address'], new_customer['email'], new_customer['password'], id, ))
+
+        # Were any rows affected?
+        # Did the client send an `id` that exists?
+        rows_affected = db_cursor.rowcount
+
+    # return value of this function
+    if rows_affected == 0:
+        # Forces 404 response by main module
+        return False
+    else:
+        # Forces 204 response by main module
+        return True
 
 # TODO: you will get an error about the address on customer. Look through the customer model and requests to see if you can solve the issue.
 
