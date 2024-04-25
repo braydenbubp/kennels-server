@@ -2,13 +2,6 @@ import sqlite3
 import json
 from models import Employee
 
-EMPLOYEES = [
-    {
-        "id": 1,
-        "name": "Jenna Solis"
-    }
-]
-
 def get_all_employees():
     # Open a connection to the database
     with sqlite3.connect("./kennel.sqlite3") as conn:

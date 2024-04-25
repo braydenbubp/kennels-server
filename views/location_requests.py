@@ -2,19 +2,6 @@ import sqlite3
 import json
 from models import Location
 
-LOCATIONS = [
-    {
-        "id": 1,
-        "name": "Nashville North",
-        "address": "8422 Johnson Pike"
-    },
-    {
-        "id": 2,
-        "name": "Nashville South",
-        "address": "209 Emory Drive"
-    }
-]
-
 def get_all_locations():
     # Open a connection to the database
     with sqlite3.connect("./kennel.sqlite3") as conn:
