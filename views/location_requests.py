@@ -1,6 +1,7 @@
 import sqlite3
 import json
-from models import Location, Animal
+from models import Location, Employee, Animal
+
 
 def get_all_locations():
     # Open a connection to the database
@@ -15,37 +16,60 @@ def get_all_locations():
         SELECT
             l.id,
             l.name,
-            l.address,
-            a.name animal_name,
-            a.status animal_status
+            l.address
         FROM Location l
-        JOIN Animal a
-            ON a.location_id = l.id
         """)
 
         # Initialize an empty list to hold all representations
         locations = []
 
         # Convert rows of data into a Python list
-        dataset = db_cursor.fetchall()
+        dataset_locations = db_cursor.fetchall()
 
         # Iterate list of data returned from database
-        for row in dataset:
-
-            # Create an instance from the current row.
-            # Note that the database fields are specified in
-            # exact order of the parameters defined in the
-            # class above.
+        for row in dataset_locations:
             location = Location(row['id'], row['name'], row['address'])
 
-            # employee = Employee(row['employee_id'], row['name'], row['address'], row['location_id'])
+            db_cursor.execute("""
+                SELECT
+                    e.id,
+                    e.name,
+                    e.address,
+                    e.location_id
+                FROM Employee e
+                WHERE e.location_id = ?
+                """, (location.id, ))
 
-            animal = Animal(row['animal_id'], row['name'], row['breed'],
-                            row['status'], row['location_id'],
-                            row['customer_id'])
+            dataset_employees = db_cursor.fetchall()
 
-            # location.employee = employee.__dict__
-            location.animal = animal.__dict__
+            for employee_row in dataset_employees:
+
+                employee = Employee(employee_row['id'], employee_row['name'],
+                                    employee_row['address'], employee_row['location_id'])
+
+                location.employee.append(employee.__dict__)
+
+            db_cursor.execute("""
+                SELECT
+                    a.id,
+                    a.name,
+                    a.breed,
+                    a.status,
+                    a.location_id,
+                    a.customer_id
+                FROM Animal a
+                WHERE a.location_id = ?
+                """, (location.id, ))
+
+            dataset_animals = db_cursor.fetchall()
+
+            for animal_row in dataset_animals:
+
+                animal = Animal(animal_row['id'], animal_row['name'], animal_row['breed'],
+                                animal_row['status'], animal_row['location_id'],
+                                animal_row['customer_id'])
+
+                location.animal.append(animal.__dict__)
 
             # see the notes below for an explanation on this line of code.
             locations.append(location.__dict__)
@@ -53,13 +77,15 @@ def get_all_locations():
     return locations
 
 # Function with a single parameter
+
+
 def get_single_location(id):
     with sqlite3.connect("./kennel.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
-        #use a ? parameter to inject a variable value
-        #into the SQL statement
+        # use a ? parameter to inject a variable value
+        # into the SQL statement
         db_cursor.execute("""
         SELECT
             l.id,
@@ -69,24 +95,76 @@ def get_single_location(id):
         WHERE l.id = ?
         """, (id, ))
 
-        #load single result into memory
-        data = db_cursor.fetchone()
+        # Initialize an empty list to hold all representations
+        locations = []
 
-        #create instance from current row
-        location = Location(data['id'], data['name'], data['address'])
+        # Convert rows of data into a Python list
+        dataset_locations = db_cursor.fetchall()
 
-        return location.__dict__
+        # Iterate list of data returned from database
+        for row in dataset_locations:
+            location = Location(row['id'], row['name'], row['address'])
 
-def create_location(location):
-    max_id = LOCATIONS[-1]["id"]
+            db_cursor.execute("""
+                SELECT
+                    e.id,
+                    e.name,
+                    e.address,
+                    e.location_id
+                FROM Employee e
+                WHERE e.location_id = ?
+                """, (location.id, ))
 
-    new_id = max_id + 1
+            dataset_employees = db_cursor.fetchall()
 
-    location["id"] = new_id
+            for employee_row in dataset_employees:
 
-    LOCATIONS.append(location)
+                employee = Employee(employee_row['id'], employee_row['name'],
+                                    employee_row['address'], employee_row['location_id'])
 
-    return location
+                location.employee.append(employee.__dict__)
+
+            db_cursor.execute("""
+                SELECT
+                    a.id,
+                    a.name,
+                    a.breed,
+                    a.status,
+                    a.location_id,
+                    a.customer_id
+                FROM Animal a
+                WHERE a.location_id = ?
+                """, (location.id, ))
+
+            dataset_animals = db_cursor.fetchall()
+
+            for animal_row in dataset_animals:
+
+                animal = Animal(animal_row['id'], animal_row['name'], animal_row['breed'],
+                                animal_row['status'], animal_row['location_id'],
+                                animal_row['customer_id'])
+
+                location.animal.append(animal.__dict__)
+
+            # see the notes below for an explanation on this line of code.
+            locations.append(location.__dict__)
+
+    return locations
+
+
+def create_location(new_location):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Employee
+            ( name, address )
+        VALUES
+            ( ?, ? );
+        """, (new_location['name'], new_location['address']))
+
+    return new_location
+
 
 def delete_location(id):
     with sqlite3.connect("./kennel.sqlite3") as conn:
@@ -96,6 +174,7 @@ def delete_location(id):
         DELETE FROM location
         WHERE id = ?
         """, (id, ))
+
 
 def update_location(id, new_location):
     with sqlite3.connect("./kennel.sqlite3") as conn:

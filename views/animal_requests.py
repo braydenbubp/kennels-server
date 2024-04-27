@@ -111,8 +111,8 @@ def create_animal(new_animal):
         VALUES
             ( ?, ?, ?, ?, ?);
         """, (new_animal['name'], new_animal['breed'],
-              new_animal['status'], new_animal['locationId'],
-              new_animal['customerId'], ))
+              new_animal['status'], new_animal['location_id'],
+              new_animal['customer_id'], ))
 
         #the 'lastrowid' prop on the cursor will return PK of last thing that got added to db
         id = db_cursor.lastrowid
