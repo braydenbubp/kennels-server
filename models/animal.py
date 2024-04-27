@@ -10,5 +10,5 @@ class Animal():
         self.status = status
         self.location_id = location_id
         self.customer_id = customer_id
-
-new_animal = Animal(5, "Snickers", "Dog", "Recreation", 1, 4)
+        self.location = None #this line is added so the app wont break
+        self.customer = None #same here
