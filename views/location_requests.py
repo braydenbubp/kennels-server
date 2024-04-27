@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from models import Location
+from models import Location, Animal
 
 def get_all_locations():
     # Open a connection to the database
@@ -13,10 +13,14 @@ def get_all_locations():
         # Write the SQL query to get the information you want
         db_cursor.execute("""
         SELECT
-            a.id,
-            a.name,
-            a.address
-        FROM location a
+            l.id,
+            l.name,
+            l.address,
+            a.name animal_name,
+            a.status animal_status
+        FROM Location l
+        JOIN Animal a
+            ON a.location_id = l.id
         """)
 
         # Initialize an empty list to hold all representations
@@ -34,6 +38,15 @@ def get_all_locations():
             # class above.
             location = Location(row['id'], row['name'], row['address'])
 
+            # employee = Employee(row['employee_id'], row['name'], row['address'], row['location_id'])
+
+            animal = Animal(row['animal_id'], row['name'], row['breed'],
+                            row['status'], row['location_id'],
+                            row['customer_id'])
+
+            # location.employee = employee.__dict__
+            location.animal = animal.__dict__
+
             # see the notes below for an explanation on this line of code.
             locations.append(location.__dict__)
 
@@ -49,11 +62,11 @@ def get_single_location(id):
         #into the SQL statement
         db_cursor.execute("""
         SELECT
-            a.id,
-            a.name,
-            a.address
-        FROM location a
-        WHERE a.id = ?
+            l.id,
+            l.name,
+            l.address
+        FROM location l
+        WHERE l.id = ?
         """, (id, ))
 
         #load single result into memory
