@@ -115,6 +115,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             if query.get('status') and resource == 'animals':
                 response = get_animals_by_status(query['status'][0])
 
+            if query.get('search') and resource == 'animals':
+                response = search_animals(query['search'][0])
+
         self.wfile.write(json.dumps(response).encode())
 
     # Here's a method on the class that overrides the parent's method.
