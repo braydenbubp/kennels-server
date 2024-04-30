@@ -118,3 +118,13 @@ JOIN Employee e
     ON e.location_id = l.id
 
 SELECT * FROM Animal ORDER BY id DESC;
+
+SELECT
+    a.id,
+    a.name,
+    a.breed,
+    a.status,
+    a.location_id,
+    a.customer_id
+FROM animal a
+WHERE a.name LIKE '%ick%'
